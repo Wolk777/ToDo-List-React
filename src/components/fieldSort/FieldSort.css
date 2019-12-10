@@ -1,0 +1,30 @@
+.sort {
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	font-size: 1em;
+	text-align: left;
+	margin-bottom: 20px;
+	color: #333;
+}
+.sortWrapper {
+	display: flex;
+	min-width: 30em;
+	margin-left: 30px;
+	padding: 3px;
+	background: #fff;
+	cursor: pointer;
+}
+.sortItem {
+	flex: 1 1 0;
+	padding:0 15px;
+	border-right: 1px solid #ccc;
+	text-align: center;
+}
+.sortItem:last-of-type {
+	border-right: none;
+}
+.active {
+	font-weight: 700;
+	color: red;
+}
