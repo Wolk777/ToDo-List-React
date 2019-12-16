@@ -1,54 +1,26 @@
 import React, {Component} from 'react';
-import Form from '../form/Form.jsx';
-import TaskList from '../taskList/TaskList'
-import './App.css';
+import { connect } from 'react-redux';
+import Form from '../../components/form/Form.jsx';
+import TaskList from '../../components/taskList/TaskList';
+import { addTask, removeTask, completedTask, changeSorting } from '../../actions/actionCreator.js';
 
-const initialTasks = [
-  {
-    id: 1575959183146,
-    taskText: 'Task7',
-    dateTask: '2019-12-03',
-    isCompleted: false,
-  },
-  {
-    id: 1575959133146,
-    taskText: 'Task2',
-    dateTask: '2019-12-04',
-    isCompleted: false,
-  },
-  {
-    id: 1575952133146,
-    taskText: 'Task9',
-    dateTask: '2019-12-09',
-    isCompleted: true,
-  },
-  {
-    id: 1575952133946,
-    taskText: 'Task92',
-    dateTask: '2019-12-03',
-    isCompleted: false,
-  },
-];
+import './App.css';
 
 class App extends Component {
   constructor(props) {
     super(props);
 
-    let tasks = window.localStorage.getItem("tasks") ? JSON.parse(window.localStorage.getItem("tasks")) : initialTasks;
     this.state = {
-    date: new Date(),
-    taskText: '',
-    dateText: '',
-    filterText: '',
-    filterDate: '',
-    tasks: tasks,
-    textValid: false,
-    dateValid: false,
-    formValid: false,
-    sortBy: 'default',
+      date: new Date(),
+      taskText: '',
+      dateText: '',
+      filterText: '',
+      filterDate: '',
+      textValid: false,
+      dateValid: false,
+      formValid: false,
     };
-    this.setTaskToLocalStorage();
-  } 
+  }
 
   handleInputAdd = (e) => {
     const name = e.target.name;
@@ -65,22 +37,15 @@ class App extends Component {
   }
 
   handleSort = (e) => {
-    this.setState({
-      sortBy:e.target.id,
-    })
+    let { changeSorting } = this.props;
+    changeSorting(e.target.id);
+
+    this.setTaskToLocalStorage();
   }
 
   toggleIsCompleted = (id) => {
-    let { tasks } = this.state;
-    let newTasks = tasks.map( task => {
-      if(task.id === id) {
-        task.isCompleted = !task.isCompleted;
-      }
-      return task;
-    });
-    this.setState({
-      tasks: newTasks,
-    })
+    this.props.completedTask(id);
+    this.setTaskToLocalStorage();
   }
 
   validateField = (fieldName, value) => {
@@ -110,34 +75,26 @@ class App extends Component {
     if (!formValid) {
       return;
     }
-    let newTask = {
-      id: new Date().getTime(),
-      taskText: taskText,
-      dateTask: dateText,
-      isCompleted: false,
-    };
-    this.setState(({ tasks }) => ({
+
+    this.props.addTask((new Date()).getTime(), taskText, dateText, false);
+
+    this.setState(() => ({
       taskText: '',
       dateText: '',
       textValid: false,
       dateValid: false,
       formValid: false,
-      tasks: [...tasks, newTask],
-    }));
-    this.setTaskToLocalStorage();
+    }), this.setTaskToLocalStorage);
   }
 
   setTaskToLocalStorage = () => {
-    let { tasks } = this.state;
+    let { tasks } = this.props;
     window.localStorage.setItem("tasks", JSON.stringify(tasks));
   }
 
-  removeTask = (id) => {
-    let { tasks } = this.state;
-    let newTask = tasks.filter( task => task.id !== id);
-    this.setState({
-      tasks: newTask,
-    }, () => { this.setTaskToLocalStorage() });
+  deleteTask = (id) => {
+    this.props.removeTask(id);
+    this.setTaskToLocalStorage();
   }
   
   tick = () => {
@@ -158,7 +115,24 @@ class App extends Component {
   }
 
   render() {
-    const { taskText, dateText, filterText, filterDate, textValid, dateValid, date, tasks, sortBy} = this.state;
+    const { taskText, dateText, filterText, filterDate, textValid, dateValid, date } = this.state;
+    const { tasks, sorting } = this.props;
+
+    let sortTask = [...tasks];
+
+    if (filterText !== '') {
+      sortTask = sortTask.filter(task => task.taskText.includes(filterText));
+    }
+    if (filterDate !== '') {
+      sortTask = sortTask.filter(task => task.dateTask.includes(filterDate));
+    }
+
+    if (sorting === 'text') {
+      sortTask.sort((a,b) => (a.taskText > b.taskText ? 1 : -1));
+    } else if (sorting === 'date') {
+      sortTask.sort((a,b) => (new Date(a.dateTask).getTime() > new Date(b.dateTask).getTime() ? 1 : -1));
+    } 
+
     return (
       <div className='container'>
         <Form 
@@ -174,12 +148,12 @@ class App extends Component {
           date={date}
         />
         <TaskList 
-          tasks={tasks} 
-          sortBy={sortBy}
+          tasks={sortTask} 
+          sortBy={sorting}
           filterText={filterText}
           filterDate={filterDate}
           onHandleSort={this.handleSort}
-          onRemove={this.removeTask}
+          onRemove={this.deleteTask}
           onToggleIsCompleted={this.toggleIsCompleted}
         />
       </div>
@@ -187,4 +161,16 @@ class App extends Component {
   }
 }
 
-export default App;
+
+const mapStateToProps = state => ({
+  tasks: state.tasks,
+  sorting: state.sorting,
+}) 
+
+const mapDispatchToProps = {
+  addTask,
+  removeTask,
+  completedTask,
+  changeSorting,
+}
+export default connect(mapStateToProps, mapDispatchToProps)(App);
