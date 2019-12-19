@@ -40,18 +40,15 @@ const tasks = (state = tasksState, { type, id, taskText, dateTask, isCompleted }
           dateTask,
           isCompleted,
         }];
-      break;
     case REMOVE_TASK:
-      return [...state].filter((task) => task.id !== id);
-      break;
+      return state.filter((task) => task.id !== id);
     case COMPLETED_TASK:
-      return [...state].map((task) => {
+      return state.map((task) => {
         if (task.id === id) {
           task.isCompleted = !task.isCompleted;
         }
         return task;
       });
-      break;
     default:
       return state;
   }

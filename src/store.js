@@ -1,5 +1,6 @@
-import { createStore, compose } from 'redux';
+import { createStore, compose, applyMiddleware } from 'redux';
 import rootReducer from './reducers/index';
+import logger from 'redux-logger';
 
 /* eslint-disable no-underscore-dangle */
 const composeEnhancers = process.env.NODE_ENV !== 'production'
@@ -12,10 +13,14 @@ const configureStore = (preloadedState) => (
   createStore(
     rootReducer,
     preloadedState,
-    composeEnhancers(),
+    composeEnhancers(applyMiddleware(logger)),
   )
 );
 
 const store = configureStore({});
+
+store.subscribe(() => {
+	window.localStorage.setItem("tasks", JSON.stringify(store.getState().tasks))
+});
 
 export default store;

@@ -39,13 +39,10 @@ class App extends Component {
   handleSort = (e) => {
     let { changeSorting } = this.props;
     changeSorting(e.target.id);
-
-    this.setTaskToLocalStorage();
   }
 
   toggleIsCompleted = (id) => {
     this.props.completedTask(id);
-    this.setTaskToLocalStorage();
   }
 
   validateField = (fieldName, value) => {
@@ -84,17 +81,11 @@ class App extends Component {
       textValid: false,
       dateValid: false,
       formValid: false,
-    }), this.setTaskToLocalStorage);
-  }
-
-  setTaskToLocalStorage = () => {
-    let { tasks } = this.props;
-    window.localStorage.setItem("tasks", JSON.stringify(tasks));
+    }));
   }
 
   deleteTask = (id) => {
     this.props.removeTask(id);
-    this.setTaskToLocalStorage();
   }
   
   tick = () => {
@@ -161,7 +152,6 @@ class App extends Component {
   }
 }
 
-
 const mapStateToProps = state => ({
   tasks: state.tasks,
   sorting: state.sorting,
@@ -173,4 +163,5 @@ const mapDispatchToProps = {
   completedTask,
   changeSorting,
 }
+
 export default connect(mapStateToProps, mapDispatchToProps)(App);
