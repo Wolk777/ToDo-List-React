@@ -1,0 +1,49 @@
+.listItem {
+	display: flex;
+	flex-flow: row nowrap;
+	margin: 0;
+	padding: 5px;
+	margin-bottom: 15px;
+	background: #fff;
+	list-style: none;
+	border: 1px solid #ccc;
+}
+.listItemTask {
+	margin-left: 10px;
+	flex-grow: 1;
+	color: #333;
+}
+.listItemText {
+	font-size: 1.1em;
+	position: relative;
+	margin: 0;
+	padding-right: 15px;
+	text-align: left;
+}
+.fa-times {
+	display: block;
+	position: absolute;
+	top: 0;
+	right: 0;
+	color: red;
+}
+.listItemDate {
+	margin: 0;
+	font-size: .6em;
+	text-align: right;
+}
+.iconDone {
+	display: flex;
+	flex: 0 0 2em;
+	justify-content: center;
+	align-items: center;
+	border-right: 2px solid #00CED1;
+	font-size: 1.2em;
+}
+.fa-check-square {
+	color: #999;	
+}
+.completed {
+	color: #999;
+	text-decoration: line-through;
+}

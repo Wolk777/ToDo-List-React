@@ -1,0 +1,15 @@
+.widget {
+	margin: 20px 0 30px;
+}
+.formTime {
+	margin: 10px auto;
+	font-family: 'Roboto', sans-serif;
+	font-size: 4.5em;
+	color: #333;
+}
+.formDate {
+	font-size: 2em;
+	font-family: 'Roboto', sans-serif;
+	margin: 10px auto;
+	color: #333;
+}
